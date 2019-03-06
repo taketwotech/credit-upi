@@ -4,28 +4,66 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <h2>Welcome to Credit UPI!</h2>
-  <ion-list>
+  <h4>Welcome to Credit UPI!</h4>
+  <ion-list *ngIf="vpas.length && !credit">
     <ion-item>
-      Some info about credit UPI - 1
+      <ion-label>Select VPA</ion-label>
+      <ion-select>
+        <ion-option *ngFor="let vpa of vpas" value="{{vpa.virtual_address}}">{{vpa.virtual_address}}</ion-option>
+      </ion-select>
     </ion-item>
-    <ion-item>
-      Some info about credit UPI - 2
-    </ion-item>
-    <ion-item>
-      Some info about credit UPI - 3
-    </ion-item>
-    <ion-item>
-      Some info about credit UPI - 4
-    </ion-item>
+    <p>
+      <ion-item>
+        <ion-label>I agree to <a href="#">terms of use & conditions</a></ion-label>
+        <ion-checkbox></ion-checkbox>
+      </ion-item>
+    </p>
+    <p>
+      <button ion-button block (click)="requestCredit()" id="request">Request Credit!</button>
+    </p>      
   </ion-list>
-  <p>
+
+  <ion-list [hidden]="showNewUPI">
+    <ion-item *ngIf="!credit"><a href="#" (click)="toggleInput()" id="createNewVpa">Create new VPA</a></ion-item>
     <ion-item>
-      <ion-label>I agree to <a href="#">terms of use & conditions</a></ion-label>
-      <ion-checkbox></ion-checkbox>
+      <ion-label floating>VPA</ion-label>
+      <ion-input type="text" value="" text-left [(ngModel)]="vpa"></ion-input>
     </ion-item>
-  </p>
-  <p>
-    <button ion-button block>Request Credit!</button>
-  </p>
+    <p>
+      <button ion-button block (click)="createVpa()">Create new VPA</button>
+    </p>      
+  </ion-list>
+  <div *ngIf="credit">
+    <ion-card *ngIf="credit.status == 'P'">
+      <ion-card-content>
+        <ion-card-title>
+          Credit Approval
+          </ion-card-title>
+        <p>
+          You have been approved a credit limit of {{credit.limit}} from ICICI. Please click on accept button to approve and reject button to decline.
+        </p>
+      </ion-card-content>
+      <ion-row>
+        <ion-col><button ion-button block (click)="approve()" color="danger">Approve</button></ion-col>
+        <ion-col><button ion-button block (click)="reject()">Reject</button></ion-col>
+      </ion-row>
+    </ion-card>
+    <ion-card *ngIf="credit.status == 'A'">
+      <ion-card-header>
+        Credit Limit
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <h2>Available</h2>
+            <p>{{credit.limit}}</p>
+          </ion-item>
+          <ion-item>
+            <h2>Used</h2>
+            <p>0</p>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

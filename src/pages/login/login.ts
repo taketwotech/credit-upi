@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, AlertController, NavParams, LoadingController, Loading, } from 'ionic-angular';
+import { IonicPage, NavController, AlertController, NavParams, LoadingController, Loading } from 'ionic-angular';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { Storage } from '@ionic/storage';
 /**
@@ -32,6 +32,11 @@ export class LoginPage {
     this.auth.login(this.registerCredentials).subscribe(response => {
       if (response && response.key) {
         this.storage.set('key', response.key)
+        this.storage.set('url', response.user)
+        this.auth.getUser(response.user).subscribe(user => {
+          this.storage.set('user', user)
+          console.log(user);
+        })
         this.navCtrl.setRoot('TabsPage');
       } else {
         this.showError("Access Denied");
@@ -40,6 +45,12 @@ export class LoginPage {
       error => {
         this.showError(error);
       });
+  }
+
+  getKey() {
+    return this.storage.get('user').then((key) => {
+      return key
+    })
   }
 
   showLoading() {
